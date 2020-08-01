@@ -16,18 +16,6 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 npm install @angular/cli -g
 ```
 
-## Install Angular Globally
-
-```javascript
-npm install @angular/cli -g
-```
-
-## Install Angular Globally
-
-```javascript
-npm install @angular/cli -g
-```
-
 # Angular Project setup
 
 We are going to build a MEAN stack web app using Angular. In our MEAN stack web app, we’ll use the Angular framework to create the frontend of the app. Run the below command to generate a new angular project.
@@ -101,7 +89,7 @@ We’ll be using Angular Material UI library to build students record management
 - Angular material data tables
 - Angular material chip inputs
 
-#### Run the following command to setup Angular material
+#### Run the following command to setup Angular material (Please use specific version mentioned below)
 
 ```javascript
 npm install @angular/material@7.3.2
@@ -306,6 +294,7 @@ export class AppComponent {
 ### To set up the style add the following code in styles.css file.
 
 ```css
+@import "@angular/material/prebuilt-themes/deeppurple-amber.css";
 html,
 body {
   height: 100%;
@@ -350,7 +339,7 @@ body {
   padding: 25px 40px 0;
 }
 .mat-sidenav {
-  background-color: rgb(116, 124, 120);
+  background-color: #ffff;
   width: 250px;
 }
 .header {
@@ -372,7 +361,7 @@ mat-sidenav mat-icon {
 }
 .controllers-wrapper > * {
   width: 100%;
-  padding: 0;
+  padding: 10;
 }
 .misc-bottom-padding {
   margin: 8px 0 10px;
