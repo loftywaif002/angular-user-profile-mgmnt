@@ -64,7 +64,7 @@ mat-sidenav mat-icon {
 }
 .controllers-wrapper > * {
   width: 100%;
-  padding: 0;
+  padding: 10;
 }
 .misc-bottom-padding {
   margin: 8px 0 10px;

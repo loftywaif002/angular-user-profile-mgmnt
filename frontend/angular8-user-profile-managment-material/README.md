@@ -22,6 +22,12 @@ npm install @angular/cli -g
 npm install @angular/cli -g
 ```
 
+## Install Angular Globally
+
+```javascript
+npm install @angular/cli -g
+```
+
 # Angular Project setup
 
 We are going to build a MEAN stack web app using Angular. In our MEAN stack web app, we’ll use the Angular framework to create the frontend of the app. Run the below command to generate a new angular project.
@@ -887,6 +893,292 @@ import { ApiService } from './shared/api.service';
 @NgModule({
   providers: [ApiService]
 })
+```
+
+## Add User using MEAN Stack REST APIs with Angular Material
+
+### In this part of the tutorial we will learn to add user in the MongoDB database. We’ll be using Angular Reactive form to add user in the database.
+
+### Import ReactiveFormsModule API in App Module File
+
+#### In order to work with Reactive Forms we must import the ReactiveFormsModule API and FormsModule API in app.module.ts file.
+
+```
+/* Reactive form services in Angular 8 */
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
+@NgModule({
+  imports: [
+    ReactiveFormsModule,
+    FormsModule
+  ],
+})
+
+export class AppModule { }
+```
+
+### Go to add-user.component.ts file and include the given below code.
+
+```
+import { Router } from '@angular/router';
+import { Component, OnInit, ViewChild, NgZone } from '@angular/core';
+import { COMMA, ENTER } from '@angular/cdk/keycodes';
+import { MatChipInputEvent } from '@angular/material';
+import { ApiService } from './../../shared/api.service';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+
+export interface Team {
+  name: string;
+}
+
+@Component({
+  selector: 'app-add-user',
+  templateUrl: './add-user.component.html',
+  styleUrls: ['./add-user.component.css'],
+})
+export class AddUserComponent implements OnInit {
+  visible = true;
+  selectable = true;
+  selected: string;
+
+  removable = true;
+  addOnBlur = true;
+  @ViewChild('chipList') chipList;
+  @ViewChild('resetUserForm') myNgForm;
+  readonly separatorKeysCodes: number[] = [ENTER, COMMA];
+  userForm: FormGroup;
+  teamArray: Team[] = [];
+  RolesArray: any = [
+    'Admin',
+    'Manager',
+    'Front End Developer',
+    'Backend Developer',
+    'Mobile Developer',
+    'Designer',
+  ];
+
+  constructor(
+    public fb: FormBuilder,
+    private router: Router,
+    private ngZone: NgZone,
+    private userApi: ApiService
+  ) {}
+
+  ngOnInit(): void {
+    this.submitBookForm();
+    this.selected = 'Roles';
+  }
+
+  /* Reactive book form */
+  submitBookForm() {
+    let MOBILE_PATTERN = /[0-9\+\-\ ]/;
+    this.userForm = this.fb.group({
+      first_name: ['', [Validators.required]],
+      last_name: ['', [Validators.required]],
+      email: ['', [Validators.required]],
+      role: ['', [Validators.required]],
+      teams: [this.teamArray],
+      phone: ['', [Validators.pattern(MOBILE_PATTERN)]],
+      start_date: ['', [Validators.required]],
+      photoUrl: [''],
+    });
+  }
+
+  /* Add dynamic languages */
+  add(event: MatChipInputEvent): void {
+    const input = event.input;
+    const value = event.value;
+    // Add language
+    if ((value || '').trim() && this.teamArray.length < 5) {
+      this.teamArray.push({ name: value.trim() });
+    }
+    // Reset the input value
+    if (input) {
+      input.value = '';
+    }
+  }
+
+  /* Remove dynamic languages */
+  remove(subject: Team): void {
+    const index = this.teamArray.indexOf(subject);
+    if (index >= 0) {
+      this.teamArray.splice(index, 1);
+    }
+  }
+
+  /* Date */
+  formatDate(e) {
+    var convertDate = new Date(e.target.value).toISOString().substring(0, 10);
+    this.userForm.get('start_date').setValue(convertDate, {
+      onlyself: true,
+    });
+  }
+
+  onRoleChange(val) {
+    this.selected = '';
+    this.userForm.get('role').setValue(val);
+  }
+
+  /* Get errors */
+  public handleError = (controlName: string, errorName: string) => {
+    return this.userForm.controls[controlName].hasError(errorName);
+  };
+
+  /* Submit book */
+  submitUserForm() {
+    if (this.userForm.valid) {
+      this.userApi.AddUser(this.userForm.value).subscribe((res) => {
+        this.ngZone.run(() => this.router.navigateByUrl('/users-list'));
+      });
+    }
+  }
+}
+
+```
+
+### Then go to add-user.component.html file and add the following code.
+
+```
+<!-- Title group  -->
+<div class="title-group">
+  <h1 class="mat-h1">Add Student</h1>
+  <mat-divider fxFlex="1 0"></mat-divider>
+</div>
+<!-- Form -->
+<div class="inner-wrapper">
+  <form
+    [formGroup]="userForm"
+    (ngSubmit)="submitUserForm()"
+    #resetUserForm="ngForm"
+    novalidate
+  >
+    <!-- Left block -->
+    <mat-card>
+      <div class="controllers-wrapper">
+        <!-- First Name -->
+        <mat-form-field class="example-full-width">
+          <input
+            matInput
+            placeholder="First name"
+            formControlName="first_name"
+          />
+          <mat-error *ngIf="handleError('first_name', 'required')">
+            You must provide a<strong>First name</strong>
+          </mat-error>
+        </mat-form-field>
+        <!-- Last Name -->
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="Last name" formControlName="last_name" />
+          <mat-error *ngIf="handleError('last_name', 'required')">
+            You must provide a<strong>Last name</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Email -->
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="email" formControlName="email" />
+          <mat-error *ngIf="handleError('email', 'required')">
+            You must provide a<strong>student email</strong>
+          </mat-error>
+        </mat-form-field>
+        <!-- Role -->
+
+        <mat-form-field>
+          <mat-label>{{ selected }}</mat-label>
+
+          <mat-select #matmat formControlName="role">
+            <div (click)="matmat.close()">
+              <mat-option
+                [value]="role"
+                *ngFor="let role of RolesArray"
+                (click)="onRoleChange(role)"
+                >{{ role }}
+              </mat-option>
+            </div>
+          </mat-select>
+
+          <mat-error *ngIf="handleError('role', 'required')">
+            Role is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </mat-card>
+    <!-- Right block -->
+    <mat-card>
+      <div class="controllers-wrapper">
+        <!-- Add Teams -->
+        <mat-form-field class="multiple-items">
+          <mat-chip-list #chipList>
+            <mat-chip
+              *ngFor="let teamArray of teamArray"
+              [selectable]="selectable"
+              [removable]="removable"
+              (removed)="remove(teamArray)"
+            >
+              {{ teamArray.name }}
+              <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+            </mat-chip>
+            <input
+              placeholder="Add team"
+              [matChipInputFor]="chipList"
+              [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+              [matChipInputAddOnBlur]="addOnBlur"
+              (matChipInputTokenEnd)="add($event)"
+            />
+          </mat-chip-list>
+          <i
+            class="material-icons tooltip-info"
+            matTooltip="Enter team name and press enter to add team"
+          >
+            info
+          </i>
+        </mat-form-field>
+        <!--Phone-->
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="phone" formControlName="phone" />
+          <mat-error *ngIf="handleError('phone', 'required')">
+            You must provide a<strong>phone number</strong>
+          </mat-error>
+        </mat-form-field>
+        <!-- Start Date -->
+        <mat-form-field>
+          <input
+            matInput
+            readonly
+            [matDatepicker]="picker"
+            placeholder="Start Date"
+            formControlName="start_date"
+            (dateChange)="formatDate($event)"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="handleError('start_date', 'required')">
+            Start Date is required
+          </mat-error>
+        </mat-form-field>
+        <!-- PhotoUrl -->
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="Photo URL" formControlName="photoUrl" />
+          <mat-error *ngIf="handleError('photoUrl', 'required')">
+            You must provide a<strong>PhotoUrl</strong>
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </mat-card>
+    <!-- Submit & Reset -->
+    <mat-card>
+      <div class="full-wrapper button-wrapper">
+        <div class="button-wrapper">
+          <button mat-flat-button color="warn">Submit</button>
+        </div>
+      </div>
+    </mat-card>
+  </form>
+</div>
+
 ```
 
 ## License

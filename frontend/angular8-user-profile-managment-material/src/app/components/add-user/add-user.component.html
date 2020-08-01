@@ -1,1 +1,139 @@
-<p>add-user works!</p>
+<!-- Title group  -->
+<div class="title-group">
+  <h1 class="mat-h1">Add Student</h1>
+  <mat-divider fxFlex="1 0"></mat-divider>
+</div>
+<!-- Form -->
+<div class="inner-wrapper">
+  <form
+    [formGroup]="userForm"
+    (ngSubmit)="submitUserForm()"
+    #resetUserForm="ngForm"
+    novalidate
+  >
+    <!-- Left block -->
+    <mat-card>
+      <div class="controllers-wrapper">
+        <!-- First Name -->
+        <mat-form-field class="example-full-width">
+          <input
+            matInput
+            placeholder="First name"
+            formControlName="first_name"
+          />
+          <mat-error *ngIf="handleError('first_name', 'required')">
+            You must provide a<strong>First name</strong>
+          </mat-error>
+        </mat-form-field>
+        <!-- Last Name -->
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="Last name" formControlName="last_name" />
+          <mat-error *ngIf="handleError('last_name', 'required')">
+            You must provide a<strong>Last name</strong>
+          </mat-error>
+        </mat-form-field>
+
+        <!-- Email -->
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="email" formControlName="email" />
+          <mat-error *ngIf="handleError('email', 'required')">
+            You must provide a<strong>student email</strong>
+          </mat-error>
+        </mat-form-field>
+        <!-- Role -->
+
+        <mat-form-field>
+          <mat-label>{{ selected }}</mat-label>
+
+          <mat-select #matmat formControlName="role">
+            <div (click)="matmat.close()">
+              <mat-option
+                [value]="role"
+                *ngFor="let role of RolesArray"
+                (click)="onRoleChange(role)"
+                >{{ role }}
+              </mat-option>
+            </div>
+          </mat-select>
+
+          <mat-error *ngIf="handleError('role', 'required')">
+            Role is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </mat-card>
+    <!-- Right block -->
+    <mat-card>
+      <div class="controllers-wrapper">
+        <!-- Add Teams -->
+        <mat-form-field class="multiple-items">
+          <mat-chip-list #chipList>
+            <mat-chip
+              *ngFor="let teamArray of teamArray"
+              [selectable]="selectable"
+              [removable]="removable"
+              (removed)="remove(teamArray)"
+            >
+              {{ teamArray.name }}
+              <mat-icon matChipRemove *ngIf="removable">cancel</mat-icon>
+            </mat-chip>
+            <input
+              placeholder="Add team"
+              [matChipInputFor]="chipList"
+              [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+              [matChipInputAddOnBlur]="addOnBlur"
+              (matChipInputTokenEnd)="add($event)"
+            />
+          </mat-chip-list>
+          <i
+            class="material-icons tooltip-info"
+            matTooltip="Enter team name and press enter to add team"
+          >
+            info
+          </i>
+        </mat-form-field>
+        <!--Phone-->
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="phone" formControlName="phone" />
+          <mat-error *ngIf="handleError('phone', 'required')">
+            You must provide a<strong>phone number</strong>
+          </mat-error>
+        </mat-form-field>
+        <!-- Start Date -->
+        <mat-form-field>
+          <input
+            matInput
+            readonly
+            [matDatepicker]="picker"
+            placeholder="Start Date"
+            formControlName="start_date"
+            (dateChange)="formatDate($event)"
+          />
+          <mat-datepicker-toggle
+            matSuffix
+            [for]="picker"
+          ></mat-datepicker-toggle>
+          <mat-datepicker #picker></mat-datepicker>
+          <mat-error *ngIf="handleError('start_date', 'required')">
+            Start Date is required
+          </mat-error>
+        </mat-form-field>
+        <!-- PhotoUrl -->
+        <mat-form-field class="example-full-width">
+          <input matInput placeholder="Photo URL" formControlName="photoUrl" />
+          <mat-error *ngIf="handleError('photoUrl', 'required')">
+            You must provide a<strong>PhotoUrl</strong>
+          </mat-error>
+        </mat-form-field>
+      </div>
+    </mat-card>
+    <!-- Submit & Reset -->
+    <mat-card>
+      <div class="full-wrapper button-wrapper">
+        <div class="button-wrapper">
+          <button mat-flat-button color="warn">Submit</button>
+        </div>
+      </div>
+    </mat-card>
+  </form>
+</div>
