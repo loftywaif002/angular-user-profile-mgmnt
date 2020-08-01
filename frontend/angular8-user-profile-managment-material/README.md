@@ -16,6 +16,12 @@ Run `ng build` to build the project. The build artifacts will be stored in the `
 npm install @angular/cli -g
 ```
 
+## Install Angular Globally
+
+```javascript
+npm install @angular/cli -g
+```
+
 # Angular Project setup
 
 We are going to build a MEAN stack web app using Angular. In our MEAN stack web app, we’ll use the Angular framework to create the frontend of the app. Run the below command to generate a new angular project.
@@ -92,7 +98,7 @@ We’ll be using Angular Material UI library to build students record management
 #### Run the following command to setup Angular material
 
 ```javascript
-ng add @angular/material
+npm install @angular/material@7.3.2
 ```
 
 ```bash
@@ -183,6 +189,705 @@ export class AngularMaterialModule {}
 ```
 
 ### Go to app.module.ts file and import the AngularMaterialModule.
+
+```javascript
+/* Angular material */
+import { AngularMaterialModule } from './material.module';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+
+@NgModule({
+  declarations: [...],
+  imports: [
+    BrowserAnimationsModule,
+    AngularMaterialModule,
+  ],
+  providers: [...],
+  bootstrap: [...],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA]
+})
+
+export class AppModule { }
+```
+
+## Setup a basic layout with Angular Material
+
+Go to app.component.html file and include the following code.
+
+```html
+<!-- Toolbar -->
+<mat-toolbar color="primary" class="header">
+  <div>Student Records</div>
+  <span class="nav-tool-items">
+    <mat-icon (click)="sidenav.toggle()" class="hamburger">menu</mat-icon>
+  </span>
+</mat-toolbar>
+
+<mat-sidenav-container>
+  <!-- Sidenav -->
+  <mat-sidenav
+    #sidenav
+    [mode]="isBiggerScreen() ? 'over' : 'side'"
+    [(opened)]="opened"
+    [fixedInViewport]="true"
+    [fixedTopGap]
+  >
+    <mat-nav-list>
+      <a mat-list-item routerLinkActive="active" routerLink="/add-student">
+        <mat-icon>add</mat-icon> Add User
+      </a>
+      <a mat-list-item routerLinkActive="active" routerLink="/students-list">
+        <mat-icon>format_list_bulleted</mat-icon> View Users
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <!-- Main content -->
+  <mat-sidenav-content>
+    <router-outlet></router-outlet>
+  </mat-sidenav-content>
+</mat-sidenav-container>
+```
+
+### Add the following code in app.component.ts file.
+
+```bash
+import { Component, ViewChild, HostListener, OnInit } from '@angular/core';
+import { MatSidenav } from '@angular/material/sidenav';
+
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.css']
+})
+
+export class AppComponent {
+  opened = true;
+  @ViewChild('sidenav') sidenav: MatSidenav;
+
+  ngOnInit() {
+    console.log(window.innerWidth)
+    if (window.innerWidth < 768) {
+      this.sidenav.fixedTopGap = 55;
+      this.opened = false;
+    } else {
+      this.sidenav.fixedTopGap = 55;
+      this.opened = true;
+    }
+  }
+
+  @HostListener('window:resize', ['$event'])
+  onResize(event) {
+    if (event.target.innerWidth < 768) {
+      this.sidenav.fixedTopGap = 55;
+      this.opened = false;
+    } else {
+      this.sidenav.fixedTopGap = 55
+      this.opened = true;
+    }
+  }
+
+  isBiggerScreen() {
+    const width = window.innerWidth || document.documentElement.clientWidth || document.body.clientWidth;
+    if (width < 768) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+}
+```
+
+### To set up the style add the following code in styles.css file.
+
+```css
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: "Roboto", sans-serif;
+}
+.header {
+  justify-content: space-between;
+}
+.user-profile {
+  margin-left: 15px;
+}
+.mat-sidenav-container {
+  height: 100%;
+  display: flex;
+  flex: 1 1 auto;
+}
+.mat-nav-list .mat-list-item {
+  font-size: 15px;
+}
+.nav-tool-items {
+  display: inline-block;
+  margin-right: 13px;
+}
+.user-profile {
+  margin-left: 15px;
+  cursor: pointer;
+}
+.hamburger {
+  visibility: hidden !important;
+}
+.mat-sidenav,
+.mat-sidenav-content {
+  padding: 15px;
+}
+.mat-list-item.active {
+  background: rgba(0, 0, 0, 0.04);
+}
+.mat-sidenav-content {
+  padding: 25px 40px 0;
+}
+.mat-sidenav {
+  background-color: rgb(116, 124, 120);
+  width: 250px;
+}
+.header {
+  position: sticky;
+  position: -webkit-sticky;
+  top: 0;
+  z-index: 1000;
+}
+mat-sidenav mat-icon {
+  margin-right: 12px;
+}
+.hamburger {
+  margin-top: 5px;
+  cursor: pointer;
+}
+.mat-radio-button,
+.mat-radio-group {
+  margin-right: 25px;
+}
+.controllers-wrapper > * {
+  width: 100%;
+  padding: 0;
+}
+.misc-bottom-padding {
+  margin: 8px 0 10px;
+}
+.misc-bottom-padding mat-label {
+  margin-right: 15px;
+}
+mat-radio-group mat-radio-button {
+  margin-left: 5px;
+}
+.button-wrapper button {
+  margin-right: 5px;
+}
+table.mat-table,
+table {
+  width: 100%;
+}
+.inner-wrapper {
+  padding: 15px 0 130px;
+  width: 100%;
+}
+.inner-wrapper mat-card {
+  display: inline-block;
+  margin: 0 6% 0 0;
+  vertical-align: top;
+  width: 44%;
+}
+.full-wrapper {
+  width: 100%;
+}
+.multiple-items {
+  position: relative;
+}
+.multiple-items .tooltip-info {
+  right: 0;
+  top: 7px;
+  cursor: pointer;
+  color: #a1a7c7;
+  position: absolute;
+  font-size: 20px;
+}
+body .push-right {
+  margin-right: 10px;
+}
+.no-data {
+  text-align: center;
+  padding-top: 30px;
+  color: #6c75a9;
+}
+.button-wrapper {
+  margin: 20px 0 0 0;
+}
+@media (max-width: 1024px) {
+  .inner-wrapper mat-card {
+    width: 100%;
+  }
+  .mat-sidenav-content {
+    padding: 20px 20px 0;
+  }
+  .misc-bottom-padding mat-label {
+    display: block;
+    padding-bottom: 10px;
+  }
+  .mat-sidenav {
+    width: 230px;
+  }
+  .mat-nav-list .mat-list-item {
+    font-size: 14px;
+  }
+}
+@media (max-width: 767px) {
+  .nav-tool-items {
+    margin-right: 0;
+  }
+  .hamburger {
+    visibility: visible !important;
+  }
+}
+```
+
+## Build Mean Stack Backend with MongoDB, Node JS and Express JS
+
+In this part of the tutorial, we are going to build a robust Mean stack backend using mongoDB, node js, and express js.
+
+Following topics will be covered in this part of the tutorial:
+
+- Create a separate project for Mean stack backend.
+- Install required dependencies using NPM: body-parser, cors, express js, mongoose, and nodemon.
+- Set up MongoDB Database connection in Mean stack app to access MongoDB database using MongoDB Shell.
+- Define a data model with mongoose JS in Mean stack project.
+- Create RESTful APIs with Express js Routes in Mean Stack Project.
+- Configure Angular 8/9 Mean Stack backend
+
+## Create a separate project for Mean stack backend.
+
+### In order to set up a separate Mean stack backend create a folder by the name of backend outside the root directory
+
+```bash
+cd ../ && mkdir backend && cd backend
+```
+
+You’ve created the backend folder and entered into the project.
+
+Next thing is to create a separate package.json for your Mean stack backend.
+
+```bash
+npm init
+```
+
+```bash
+starting point (index.js): server.js
+```
+
+#### Install required dependencies using NPM: body-parser, cors, express js, mongoose, and nodemon.
+
+After that install the required dependencies for your Mean stack app.
+
+```bash
+npm install --save express mongoose cors body-parser
+```
+
+Then install nodemon package it will save us from restarting the server every-time we make the changes in our backend code.
+
+```
+npm install nodemon --save-dev
+```
+
+Your package.json file for Mean stack backend will look something like this.
+
+```javascript
+{
+  "name": "angular8-user-profile-managment",
+  "version": "1.0.0",
+  "description": "Angular Backend",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ANgular"
+  ],
+  "author": "Dipro Chowdhury",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "express": "^4.17.1",
+    "mongoose": "^5.9.26"
+  }
+}
+
+```
+
+# Set up MongoDB Database connection in Mean stack app to access MongoDB database using MongoDB Shell.
+
+Please use this link to setup database locally
+[link to MongoDB website!](https://docs.mongodb.com/manual/tutorial/install-mongodb-on-os-x/)
+
+Inside the backend > database > db.js file paste the following code. Here `teamManagementMean` is your mongoDB database name.
+
+```javascript
+module.exports = {
+  db: "mongodb://localhost:27017/teamManagementMean",
+};
+```
+
+# Define User data model with mongoose JS in Mean stack app.
+
+We’ll create a model folder, inside the model folder we’ll create a User Schema for users collection in MongoDB. Paste the below code in the model > User.js file.
+
+```
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+
+// Define collection and schema
+let User = new Schema(
+  {
+    first_name: {
+      type: String,
+    },
+    last_name: {
+      type: String,
+    },
+    email: {
+      type: String,
+    },
+    role: {
+      type: String,
+    },
+    teams: {
+      type: Array,
+    },
+    phone: {
+      type: Number,
+    },
+    start_date: {
+      type: Date,
+    },
+    photoUrl: {
+      type: String,
+    },
+  },
+  {
+    collection: 'users',
+  }
+)
+
+module.exports = mongoose.model('User', User)
+
+```
+
+# Create RESTful APIs with Express js Routes in Mean Stack Project.
+
+In this Angular 8/9/10 Mean stack tutorial we are going to create RESTful APIs using Express js and Node js. I will create a routes folder inside the backend folder and create a user.routes.js file.
+
+```
+mkdir routes && cd routes && touch user.route.js
+```
+
+We’ve created RESTful APIs using Express js and Student Model, now Go to user.route.js file and add the following code.
+
+```
+const express = require('express')
+const userRoutes = express.Router()
+
+// User model
+let User = require('../model/User')
+
+// Add User
+userRoutes.route('/add-user').post((req, res, next) => {
+  User.create(req.body, (error, data) => {
+    if (error) {
+      return next(error)
+    } else {
+      res.json(data)
+    }
+  })
+})
+
+// Get all users
+userRoutes.route('/').get((req, res) => {
+  User.find((error, data) => {
+    if (error) {
+      return next(error)
+    } else {
+      res.json(data)
+    }
+  })
+})
+
+// Get single user
+userRoutes.route('/read-user/:id').get((req, res) => {
+  User.findById(req.params.id, (error, data) => {
+    if (error) {
+      return next(error)
+    } else {
+      res.json(data)
+    }
+  })
+})
+
+// Update user
+userRoutes.route('/update-user/:id').put((req, res, next) => {
+  User.findByIdAndUpdate(
+    req.params.id,
+    {
+      $set: req.body,
+    },
+    (error, data) => {
+      if (error) {
+        return next(error)
+      } else {
+        res.json(data)
+        console.log('User successfully updated!')
+      }
+    }
+  )
+})
+
+// Delete user
+userRoutes.route('/delete-user/:id').delete((req, res, next) => {
+  User.findByIdAndRemove(req.params.id, (error, data) => {
+    if (error) {
+      return next(error)
+    } else {
+      res.status(200).json({
+        msg: data,
+      })
+    }
+  })
+})
+
+module.exports = userRoutes
+
+```
+
+Configure Mean Stack backend
+Now we’ll create app.js file in backend folder’s root. Run the below command to generate backend > server.js file.
+
+```
+touch server.js
+```
+
+# Mange Backend settings in Mean stack Project.
+
+### Now we are going to create app.js file this file will hold the core logic of our Mean stack project’s backend logic. ### This file will manage the following things.
+
+- Setup port using express
+- Setup 404 error using express.js
+- Making mongoDB database connection
+- Serving static files using express js in Mean stack app
+- Handling errors using Express js in Angular Mean stack project
+
+```
+let express = require('express'),
+  path = require('path'),
+  mongoose = require('mongoose'),
+  cors = require('cors'),
+  bodyParser = require('body-parser'),
+  dataBaseConfig = require('./database/db')
+
+// Connecting mongoDB
+mongoose.Promise = global.Promise
+mongoose
+  .connect(dataBaseConfig.db, {
+    useNewUrlParser: true,
+    useFindAndModify: false,
+  })
+  .then(
+    () => {
+      console.log('Database connected successfully ')
+    },
+    (error) => {
+      console.log('Could not connected to database : ' + error)
+    }
+  )
+
+// Set up express js port
+const userRoute = require('./routes/user.route')
+
+const app = express()
+app.use(bodyParser.json())
+app.use(
+  bodyParser.urlencoded({
+    extended: false,
+  })
+)
+app.use(cors())
+
+// Setting up static directory
+app.use(
+  express.static(
+    path.join(__dirname, 'dist/angular8-meanstack-angular-material')
+  )
+)
+
+// RESTful API root
+app.use('/api', userRoute)
+
+// PORT
+const port = process.env.PORT || 8000
+
+app.listen(port, () => {
+  console.log('Connected to port ' + port)
+})
+
+// Find 404 and hand over to error handler
+app.use((req, res, next) => {
+  next(createError(404))
+})
+
+// Index Route
+app.get('/', (req, res) => {
+  res.send('invaild endpoint')
+})
+
+app.get('*', (req, res) => {
+  res.sendFile(
+    path.join(__dirname, 'dist/angular8-meanstack-angular-material/index.html')
+  )
+})
+
+// error handler
+app.use(function (err, req, res, next) {
+  console.error(err.message)
+  if (!err.statusCode) err.statusCode = 500
+  res.status(err.statusCode).send(err.message)
+})
+
+```
+
+# Build Angular 8/9/10 Service to Consume REST APIs
+
+### To create Mean stack student records management system app. We need to create a service file where we’ll consume REST APIs to manage the student data. This service file will manage the Create, Read, Update and Delete operations.
+
+### Configure Angular HttpClientModule:
+
+### Import HttpClientModule service in app.module.ts file.
+
+```
+/* Angular 8 http service */
+import { HttpClientModule } from '@angular/common/http';
+
+@NgModule({
+  imports: [
+    HttpClientModule
+   ]
+})
+```
+
+## Create & configure User class:
+
+#### Enter the below command to create app/shared > user.ts file.
+
+```
+export class User {
+  _id: String;
+  first_name: String;
+  last_name: String;
+  email: String;
+  role: String;
+  teams: Array<string>;
+  phone: Number;
+  start_date: Date;
+  photoUrl: String;
+}
+```
+
+# Create Angular 8/9/10 service to Consume REST APIs
+
+#### Enter the following command to create Angular service to manage CRUD operations in MEAN Stack web app.
+
+```
+ng g s shared/api
+```
+
+#### In the given below code we’ve consumed REST APIs using Angular service. Add the following code in your shared > api.service.ts file.
+
+```
+import { Injectable } from '@angular/core';
+import { User } from './user';
+import { Observable, throwError } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
+import {
+  HttpClient,
+  HttpHeaders,
+  HttpErrorResponse,
+} from '@angular/common/http';
+
+@Injectable({
+  providedIn: 'root',
+})
+export class ApiService {
+  endpoint: string = 'http://localhost:8000/api';
+  headers = new HttpHeaders().set('Content-Type', 'application/json');
+
+  constructor(private http: HttpClient) {}
+
+  // Add user
+  AddUser(data: User): Observable<any> {
+    let API_URL = `${this.endpoint}/add-user`;
+    return this.http.post(API_URL, data).pipe(catchError(this.errorMgmt));
+  }
+
+  // Get all users
+  GetUsers() {
+    return this.http.get(`${this.endpoint}`);
+  }
+
+  // Get user
+  GetUser(id): Observable<any> {
+    let API_URL = `${this.endpoint}/read-user/${id}`;
+    return this.http.get(API_URL, { headers: this.headers }).pipe(
+      map((res: Response) => {
+        return res || {};
+      }),
+      catchError(this.errorMgmt)
+    );
+  }
+
+  // Update user
+  UpdateUser(id, data): Observable<any> {
+    let API_URL = `${this.endpoint}/update-user/${id}`;
+    return this.http
+      .put(API_URL, data, { headers: this.headers })
+      .pipe(catchError(this.errorMgmt));
+  }
+
+  // Delete user
+  DeleteUser(id): Observable<any> {
+    var API_URL = `${this.endpoint}/delete-user/${id}`;
+    return this.http.delete(API_URL).pipe(catchError(this.errorMgmt));
+  }
+
+  // Error handling
+  errorMgmt(error: HttpErrorResponse) {
+    let errorMessage = '';
+    if (error.error instanceof ErrorEvent) {
+      // Get client-side error
+      errorMessage = error.error.message;
+    } else {
+      // Get server-side error
+      errorMessage = `Error Code: ${error.status}\nMessage: ${error.message}`;
+    }
+    console.log(errorMessage);
+    return throwError(errorMessage);
+  }
+}
+
+```
+
+## Go to app.module.ts file and import this API service like given below.
+
+```
+/* Angular 8 CRUD services */
+import { ApiService } from './shared/api.service';
+
+@NgModule({
+  providers: [ApiService]
+})
+```
 
 ## License
 
