@@ -32,7 +32,7 @@ ng new angular8-user-profile-managment-material
 ## Head over to the newly created project folder
 
 ```javascript
-angular8 - user - profile - managment - materia;
+angular8-user-profile-managment-material;
 ```
 
 #### In next step we’ll create three new components to manage Mean stack Angular CRUD app. Use Angular CLI to generate Angular components:
