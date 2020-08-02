@@ -77,14 +77,14 @@ export class AddUserComponent implements OnInit {
   }
 
   /* Remove dynamic languages */
-  remove(subject: Team): void {
-    const index = this.teamArray.indexOf(subject);
+  remove(team: Team): void {
+    const index = this.teamArray.indexOf(team);
     if (index >= 0) {
       this.teamArray.splice(index, 1);
     }
   }
 
-  /* Date */
+  /* Start Date */
   formatDate(e) {
     var convertDate = new Date(e.target.value).toISOString().substring(0, 10);
     this.userForm.get('start_date').setValue(convertDate, {

@@ -210,7 +210,7 @@ Go to app.component.html file and include the following code.
 ```html
 <!-- Toolbar -->
 <mat-toolbar color="primary" class="header">
-  <div>Student Records</div>
+  <div>User Records</div>
   <span class="nav-tool-items">
     <mat-icon (click)="sidenav.toggle()" class="hamburger">menu</mat-icon>
   </span>
@@ -226,10 +226,10 @@ Go to app.component.html file and include the following code.
     [fixedTopGap]
   >
     <mat-nav-list>
-      <a mat-list-item routerLinkActive="active" routerLink="/add-student">
+      <a mat-list-item routerLinkActive="active" routerLink="/add-user">
         <mat-icon>add</mat-icon> Add User
       </a>
-      <a mat-list-item routerLinkActive="active" routerLink="/students-list">
+      <a mat-list-item routerLinkActive="active" routerLink="/users-list">
         <mat-icon>format_list_bulleted</mat-icon> View Users
       </a>
     </mat-nav-list>
@@ -988,8 +988,8 @@ export class AddUserComponent implements OnInit {
   }
 
   /* Remove dynamic languages */
-  remove(subject: Team): void {
-    const index = this.teamArray.indexOf(subject);
+  remove(team: Team): void {
+    const index = this.teamArray.indexOf(team);
     if (index >= 0) {
       this.teamArray.splice(index, 1);
     }
@@ -1169,6 +1169,141 @@ export class AddUserComponent implements OnInit {
 </div>
 
 ```
+
+# Show Students List and Delete Student Object
+
+#### Go to students-list.component.ts file and add the given below code. In this file, we’ll manage the following tasks.
+
+## Implement the Angular material data tables and Pagination with Mean stack project.
+
+## Render Students List using Mean stack REST APIs
+
+## Delete Single Object using REST APIs in Mean stack app
+
+```
+import { User } from './../../shared/user';
+import { ApiService } from './../../shared/api.service';
+import { Component, ViewChild, OnInit } from '@angular/core';
+import { MatPaginator, MatTableDataSource } from '@angular/material';
+
+@Component({
+  selector: 'app-users-list',
+  templateUrl: './users-list.component.html',
+  styleUrls: ['./users-list.component.css'],
+})
+export class UsersListComponent implements OnInit {
+  UserData: any = [];
+  dataSource: MatTableDataSource<User>;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  displayedColumns: string[] = [
+    'first_name',
+    'last_name',
+    'email',
+    'phone',
+    'role',
+    'action',
+  ];
+
+  constructor(private userApi: ApiService) {
+    this.userApi.GetUsers().subscribe((data) => {
+      this.UserData = data;
+      this.dataSource = new MatTableDataSource<User>(this.UserData);
+      setTimeout(() => {
+        this.dataSource.paginator = this.paginator;
+      }, 0);
+    });
+  }
+
+  ngOnInit(): void {}
+
+  deleteUser(index: number, e) {
+    if (window.confirm('Are you sure')) {
+      const data = this.dataSource.data;
+      data.splice(
+        this.paginator.pageIndex * this.paginator.pageSize + index,
+        1
+      );
+      this.dataSource.data = data;
+      this.userApi.DeleteUser(e._id).subscribe();
+    }
+  }
+}
+
+```
+
+## Now, go to users-list.component.html file and include the following code.
+
+```
+<!-- Title group  -->
+<div class="title-group">
+  <h1 class="mat-h1">Users List</h1>
+  <mat-divider fxFlex="1 0"></mat-divider>
+</div>
+
+<p *ngIf="UserData.length <= 0" class="no-data">There is no user added yet!</p>
+<div class="container" *ngIf="UserData.length > 0">
+  <div class="mat-elevation-z8">
+    <table mat-table [dataSource]="dataSource">
+      <ng-container matColumnDef="first_name">
+        <th mat-header-cell *matHeaderCellDef>First Name</th>
+        <td mat-cell *matCellDef="let element">{{ element.first_name }}</td>
+      </ng-container>
+      <ng-container matColumnDef="last_name">
+        <th mat-header-cell *matHeaderCellDef>Last Name</th>
+        <td mat-cell *matCellDef="let element">{{ element.last_name }}</td>
+      </ng-container>
+      <ng-container matColumnDef="email">
+        <th mat-header-cell *matHeaderCellDef>Email</th>
+        <td mat-cell *matCellDef="let element">{{ element.email }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="phone">
+        <th mat-header-cell *matHeaderCellDef>Phone</th>
+        <td mat-cell *matCellDef="let element">
+          {{ element.phone }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="role">
+        <th mat-header-cell *matHeaderCellDef>Role</th>
+        <td mat-cell *matCellDef="let element">{{ element.role }}</td>
+      </ng-container>
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef>Action</th>
+        <td mat-cell *matCellDef="let element; let i = index">
+          <button
+            mat-raised-button
+            color="primary"
+            class="push-right"
+            [routerLink]="['/edit-user/', element._id]"
+          >
+            Edit
+          </button>
+          <button
+            mat-raised-button
+            color="accent"
+            (click)="deleteUser(i, element)"
+          >
+            Delete
+          </button>
+        </td>
+      </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+    <mat-paginator
+      [pageSizeOptions]="[5, 10, 20]"
+      showFirstLastButtons
+    ></mat-paginator>
+  </div>
+</div>
+
+```
+
+# Edit Users Object in Mean Stack App
+
+### We are going to create edit functionality using RESTful API in Mean stack app with Angular Material 8.
+
+#### Go to edit-user.component.ts file and add the following code.
 
 ## License
 
