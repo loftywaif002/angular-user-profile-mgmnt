@@ -16,11 +16,12 @@ export interface Team {
 })
 export class EditUserComponent implements OnInit {
   visible = true;
-  selected: string;
+  selectable = true;
   removable = true;
   addOnBlur = true;
-  @ViewChild('chipList', { static: true }) chipList;
-  @ViewChild('resetUserForm', { static: true }) myNgForm;
+  selected: string;
+  @ViewChild('chipList') chipList;
+  @ViewChild('resetStudentForm') myNgForm;
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
   userForm: FormGroup;
   teamArray: Team[] = [];
@@ -45,21 +46,20 @@ export class EditUserComponent implements OnInit {
     this.userApi.GetUser(id).subscribe((data) => {
       this.teamArray = data.teams;
       this.userForm = this.fb.group({
-        first_name: ['', [Validators.required]],
-        last_name: ['', [Validators.required]],
-        email: ['', [Validators.required]],
-        role: ['', [Validators.required]],
+        first_name: [data.first_name, [Validators.required]],
+        last_name: [data.last_name, [Validators.required]],
+        email: [data.email, [Validators.required]],
+        role: [data.role, [Validators.required]],
         teams: [this.teamArray],
-        phone: ['', [Validators.pattern(MOBILE_PATTERN)]],
-        start_date: ['', [Validators.required]],
-        photoUrl: [''],
+        phone: [data.phone, [Validators.pattern(MOBILE_PATTERN)]],
+        start_date: [data.start_date, [Validators.required]],
+        photoUrl: [data.photoUrl],
       });
     });
   }
 
   ngOnInit(): void {
     this.updateBookForm();
-    this.selected = 'Roles';
   }
 
   /* Reactive book form */
